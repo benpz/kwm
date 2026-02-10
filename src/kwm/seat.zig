@@ -198,21 +198,21 @@ pub fn try_focus(self: *Self) void {
 
         self.rwm_seat.focusWindow(window.rwm_window);
     } else {
-        if (context.current_output) |output| blk: {
+        if (context.current_output) |output| {
             defer self.previous_focused = .{ .output = output };
 
-            if (config.cursor_wrap != .none) {
+            if (config.cursor_wrap != .none) blk: {
                 switch (self.previous_focused) {
                     .none => {},
                     .window => |w| if (w.output == output) break :blk,
                     .output => |o| if (o == output) break :blk,
                 }
-            }
 
-            self.rwm_seat.pointerWarp(
-                output.exclusive_x() + @divFloor(output.exclusive_width(), 2),
-                output.exclusive_y() + @divFloor(output.exclusive_height(), 2),
-            );
+                self.rwm_seat.pointerWarp(
+                    output.exclusive_x() + @divFloor(output.exclusive_width(), 2),
+                    output.exclusive_y() + @divFloor(output.exclusive_height(), 2),
+                );
+            }
         } else {
             self.previous_focused = .none;
         }
