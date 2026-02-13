@@ -679,6 +679,9 @@ fn rwm_seat_listener(rwm_seat: *river.SeatV1, event: river.SeatV1.Event, seat: *
             seat.window_below_pointer = window;
 
             if (config.sloppy_focus) {
+                // avoid cursor wrapping
+                seat.previous_focused = .{ .window = window };
+
                 context.focus(window);
             }
         },
