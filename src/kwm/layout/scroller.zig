@@ -30,27 +30,34 @@ pub fn arrange(self: *const Self, output: *Output) void {
     var master_x: i32 = undefined;
     const y = self.outer_gap;
 
-    if (focus_top.scroller_x) |x| blk: {
-        var link = &focus_top.link;
-        while (link.prev.? != &context.windows.link) {
-            defer link = link.prev.?;
-            const window: *Window = @fieldParentPtr("link", link.prev.?);
-            if (window.is_visible_in(output) and !window.floating) {
-                const left = self.outer_gap;
-                const right = output.width - self.outer_gap - master_width;
-                if (x < left) {
-                    master_x = left;
-                } else if (x > right) {
-                    master_x = right;
-                } else master_x = x;
-                break :blk;
-            }
+    if (focus_top.scroller_x) |scroller_x| blk: {
+        switch (scroller_x) {
+            .x => |x| {
+                var link = &focus_top.link;
+                while (link.prev.? != &context.windows.link) {
+                    defer link = link.prev.?;
+                    const window: *Window = @fieldParentPtr("link", link.prev.?);
+                    if (window.is_visible_in(output) and !window.floating) {
+                        const left = self.outer_gap;
+                        const right = output.width - self.outer_gap - master_width;
+                        if (x < left) {
+                            master_x = left;
+                        } else if (x > right) {
+                            master_x = right;
+                        } else master_x = x;
+                        break :blk;
+                    }
+                }
+                master_x = self.outer_gap;
+            },
+            .center => master_x = @divFloor(output.width-focus_top.width, 2),
         }
-        master_x = self.outer_gap;
     } else {
         master_x = self.outer_gap;
     }
-    focus_top.scroller_x = master_x;
+    if (focus_top.scroller_x != null and focus_top.scroller_x.? == .x) {
+        focus_top.scroller_x = .{ .x = master_x };
+    }
 
     focus_top.unbound_move(master_x, y);
     focus_top.unbound_resize(master_width, height);
@@ -70,7 +77,7 @@ pub fn arrange(self: *const Self, output: *Output) void {
             );
 
             x -= width;
-            window.scroller_x = x;
+            window.scroller_x = .{ .x = x };
             window.unbound_move(x, y);
             window.unbound_resize(width, height);
         }
@@ -90,7 +97,7 @@ pub fn arrange(self: *const Self, output: *Output) void {
                 @as(f32, @floatFromInt(available_width)) * window.scroller_mfact
             );
 
-            window.scroller_x = x;
+            window.scroller_x = .{ .x = x };
             window.unbound_move(x, y);
             window.unbound_resize(width, height);
             x += width;

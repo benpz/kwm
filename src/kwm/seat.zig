@@ -527,9 +527,7 @@ fn handle_actions(self: *Self) void {
                                 context.shift_to_head(window);
                                 context.focus(window);
                             },
-                            .scroller => {
-                                window.scroller_x = @divFloor(output.width-window.width, 2);
-                            },
+                            .scroller => window.scroller_x = .center,
                             else => {}
                         }
                     }

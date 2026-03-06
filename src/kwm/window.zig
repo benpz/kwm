@@ -86,7 +86,10 @@ height: i32 = 0,
 min_width: i32 = 1,
 min_height: i32 = 1,
 scroller_mfact: f32 = undefined,
-scroller_x: ?i32 = null,
+scroller_x: ?union(enum) {
+    x: i32,
+    center,
+} = null,
 operator: union(enum) {
     none,
     move: struct {
