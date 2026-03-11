@@ -518,11 +518,6 @@ pub fn send_to_output(self: *Self, window: *Window, direction: types.Direction) 
                 },
                 else => {}
             }
-
-            // reset floating_geometry
-            // window's output had changed, restore its geometry may cause error
-            window.floating_geometry = null;
-
             window.set_tag(new_output.tag);
         }
     }
