@@ -90,6 +90,12 @@ scroller_x: ?union(enum) {
     x: i32,
     center,
 } = null,
+floating_geometry: ?struct {
+    x: i32,
+    y: i32,
+    width: i32,
+    height: i32,
+} = null,
 operator: union(enum) {
     none,
     move: struct {
@@ -185,6 +191,10 @@ pub fn set_output(self: *Self, output: ?*Output, clear_former: bool) void {
         }
 
         self.output = output;
+
+        // reset floating_geometry
+        // window's output had changed, restore its geometry may cause error
+        self.floating_geometry = null;
 
         if (comptime build_options.bar_enabled) {
             if (self.output) |o| o.bar.damage(.tags);
@@ -415,6 +425,24 @@ pub fn toggle_floating(self: *Self) void {
     log.debug("<{*}> toggle floating: {}", .{ self, !self.floating });
 
     self.floating = !self.floating;
+
+    const config = Config.get();
+
+    if (!config.remember_floating_geometry) return;
+
+    if (self.floating) {
+        if (self.floating_geometry) |geometry| {
+            self.unbound_move(geometry.x, geometry.y);
+            self.unbound_resize(geometry.width, geometry.height);
+        }
+    } else {
+        self.floating_geometry = .{
+            .x = self.x,
+            .y = self.y,
+            .width = self.width,
+            .height = self.height,
+        };
+    }
 }
 
 
