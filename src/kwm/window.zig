@@ -428,8 +428,8 @@ pub fn toggle_floating(self: *Self) void {
 
     if (self.floating) {
         if (self.floating_geometry) |geometry| {
-            self.move(geometry.x, geometry.y);
-            self.resize(geometry.width, geometry.height);
+            self.unbound_move(geometry.x, geometry.y);
+            self.unbound_resize(geometry.width, geometry.height);
         }
     } else {
         self.floating_geometry = .{
