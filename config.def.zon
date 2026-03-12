@@ -126,6 +126,12 @@
         .deck = .{
             .inner_gap = 12,
             .outer_gap = 9,
+
+            // .left
+            // .right
+            // .top
+            // .bottom
+            .master_location = .left,
         },
         .scroller = .{
             .mfact = 0.5,
@@ -147,7 +153,12 @@
             .vertical = "|||",
         },
         .monocle = "[=]",
-        .deck = "[D]",
+        .deck = .{
+            .left = "[D]=",
+            .right = "=[D]",
+            .top = "[D^]",
+            .bottom = "[D_]",
+        },
         .scroller = "[==]",
         .float = "><>",
     },
