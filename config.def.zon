@@ -766,7 +766,7 @@
                 .event = .{
                     .click = .{
                         .pressed = .{
-                            .modify_tile_master_location = .{ .location = .bottom },
+                            .modify_master_location = .{ .location = .bottom },
                         },
                     },
                 },
@@ -777,7 +777,7 @@
                 .event = .{
                     .click = .{
                         .pressed = .{
-                            .modify_tile_master_location = .{ .location = .top },
+                            .modify_master_location = .{ .location = .top },
                         },
                     },
                 },
@@ -788,7 +788,7 @@
                 .event = .{
                     .click = .{
                         .pressed = .{
-                            .modify_tile_master_location = .{ .location = .right },
+                            .modify_master_location = .{ .location = .right },
                         },
                     },
                 },
@@ -799,7 +799,7 @@
                 .event = .{
                     .click = .{
                         .pressed = .{
-                            .modify_tile_master_location = .{ .location = .left },
+                            .modify_master_location = .{ .location = .left },
                         },
                     },
                 },
