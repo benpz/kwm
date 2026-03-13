@@ -532,27 +532,9 @@ fn handle_actions(self: *Self) void {
                                     return;
                                 }
 
-                                var master = blk: {
-                                    var it = context.windows.safeIterator(.forward);
-                                    while (it.next()) |w| {
-                                        if (w.is_visible_in(output) and !w.floating) {
-                                            break :blk w;
-                                        }
-                                    }
-                                    return;
-                                };
-
+                                var master = output.master_window() orelse return;
                                 var new_master = if (window != master) window
-                                    else blk: {
-                                        var it = context.focus_stack.safeIterator(.forward);
-                                        while (it.next()) |w| {
-                                            if (w == master) continue;
-                                            if (w.is_visible_in(output) and !w.floating) {
-                                                break :blk w;
-                                            }
-                                        }
-                                        return;
-                                    };
+                                    else context.focused_before(window, true) orelse return;
 
                                 // ensure the old master immediately behind the new master in focus_stack
                                 context.focus(master);
