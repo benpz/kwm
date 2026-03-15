@@ -180,6 +180,7 @@ fn set_keymap(self: *Self, keymap: Keymap) !void {
         defer posix.close(fd);
 
         const xkb_keymap = try rwm_xkb_config.createKeymap(fd, keymap.format);
+        defer xkb_keymap.destroy();
 
         self.rwm_xkb_keyboard.setKeymap(xkb_keymap);
     } else return error.MissingRiverXkbConfig;
