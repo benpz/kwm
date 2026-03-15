@@ -54,8 +54,10 @@ input_device: ?*InputDevice = null,
 new: bool = true,
 numlock: NumlockState = undefined,
 capslock: CapslockState = undefined,
-layout_index: u32 = undefined,
-layout_name: ?[]const u8 = null,
+layout: struct {
+    index: u32 = 0,
+    name: ?[]const u8 = null,
+} = .{},
 keymap: ?Keymap = null,
 
 
@@ -79,9 +81,9 @@ pub fn create(rwm_xkb_keyboard: *river.XkbKeyboardV1) !*Self {
 pub fn destroy(self: *Self) void {
     log.debug("<{*}> destroyed", .{ self });
 
-    if (self.layout_name) |name| {
+    if (self.layout.name) |name| {
         utils.allocator.free(name);
-        self.layout_name = null;
+        self.layout.name = null;
     }
 
     self.link.remove();
@@ -135,14 +137,13 @@ fn apply_rule(self: *Self, rule: *const Config.XkbKeyboardRule) void {
         };
 
         keymap_updated = true;
-        self.layout_index = 0;
-        self.layout_name = null;
+        self.layout = .{};
     }
 
     if (rule.layout) |layout| {
         if (keymap_updated or switch (layout) {
-            .index => |index| index != self.layout_index,
-            .name => |name| if (self.layout_name) |layout_name| !mem.eql(u8, layout_name, name) else true,
+            .index => |index| index != self.layout.index,
+            .name => |name| if (self.layout.name) |layout_name| !mem.eql(u8, layout_name, name) else true,
         }) self.set_layout(layout);
     }
 }
@@ -280,14 +281,14 @@ fn rwm_xkb_keyboard_listener(rwm_xkb_keyboard: *river.XkbKeyboardV1, event: rive
         .layout => |data| {
             log.debug("<{*}> layout, index: {}, name: {s}", .{ xkb_keyboard, data.index, data.name orelse "" });
 
-            if (xkb_keyboard.layout_name) |name| {
+            if (xkb_keyboard.layout.name) |name| {
                 utils.allocator.free(name);
-                xkb_keyboard.layout_name = null;
+                xkb_keyboard.layout.name = null;
             }
 
-            xkb_keyboard.layout_index = data.index;
+            xkb_keyboard.layout.index = data.index;
             if (data.name) |name| {
-                xkb_keyboard.layout_name = utils.allocator.dupe(u8, mem.span(name)) catch null;
+                xkb_keyboard.layout.name = utils.allocator.dupe(u8, mem.span(name)) catch null;
             }
         },
         .capslock_enabled => {
