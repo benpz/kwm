@@ -181,6 +181,12 @@ Mod4-Shift-\[hjkl\]
 
 kwm supports both compile-time and runtime configuration.
 
+Default configuration is usually installed to one of the following paths:
+
+	/usr/share/doc/kwm/config.zon
+
+	/usr/local/share/doc/kwm/config.zon
+
 ## Compile Time
 
 Make custom modifications in config.zon (if -Dconfig is not specified).
