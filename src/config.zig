@@ -99,7 +99,7 @@ remember_floating_geometry: bool,
 
 auto_swallow: bool,
 
-default_attach_mode: meta.enum_struct(kwm.layout.Type, kwm.WindowAttachMode),
+default_attach_mode: meta.enum_struct(kwm.Layout.Type, kwm.WindowAttachMode),
 
 default_window_decoration: kwm.WindowDecoration,
 
@@ -113,19 +113,13 @@ border: struct {
 
 tags: []const []const u8,
 
-layout: struct {
-    default: kwm.layout.Type,
-    tile: kwm.layout.tile,
-    grid: kwm.layout.grid,
-    monocle: kwm.layout.monocle,
-    deck: kwm.layout.deck,
-    scroller: kwm.layout.scroller,
-},
+default_layout: kwm.Layout.Type,
+layout: kwm.Layout,
 layout_tag: struct {
-    tile: meta.enum_struct(kwm.layout.tile.MasterLocation, []const u8),
-    grid: meta.enum_struct(kwm.layout.grid.Direction, []const u8),
+    tile: meta.enum_struct(kwm.Layout.Tile.MasterLocation, []const u8),
+    grid: meta.enum_struct(kwm.Layout.Grid.Direction, []const u8),
     monocle: []const u8,
-    deck: meta.enum_struct(kwm.layout.deck.MasterLocation, []const u8),
+    deck: meta.enum_struct(kwm.Layout.Deck.MasterLocation, []const u8),
     scroller: []const u8,
     float: []const u8,
 },

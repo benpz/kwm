@@ -546,10 +546,10 @@ fn render_dynamic_component(self: *Self) void {
     x += self.render_str(
         buffer,
         switch (self.output.current_layout()) {
-            .tile => config.layout_tag.tile.getter.get(config.layout.tile.master_location),
-            .grid => config.layout_tag.grid.getter.get(config.layout.grid.direction),
+            .tile => config.layout_tag.tile.getter.get(self.output.layout.tile.master_location),
+            .grid => config.layout_tag.grid.getter.get(self.output.layout.grid.direction),
             .monocle => config.layout_tag.monocle,
-            .deck => config.layout_tag.deck.getter.get(config.layout.deck.master_location),
+            .deck => config.layout_tag.deck.getter.get(self.output.layout.deck.master_location),
             .scroller => config.layout_tag.scroller,
             .float => config.layout_tag.float,
         },

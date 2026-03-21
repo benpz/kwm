@@ -13,7 +13,7 @@ const river = wayland.client.river;
 const Config = @import("config");
 
 const utils = @import("utils.zig");
-const layout = @import("layout.zig");
+const Layout = @import("layout.zig");
 const Context = @import("context.zig");
 const Window = @import("window.zig");
 const types = @import("types.zig");
@@ -25,12 +25,14 @@ wl_output: ?*wl.Output = null,
 rwm_output: *river.OutputV1,
 rwm_layer_shell_output: ?*river.LayerShellOutputV1,
 
+layout: Layout,
+
 tag: u32 = 1,
 main_tag: u32 = 1,
 prev_tag: u32 = 1,
 prev_main_tag: u32 = 1,
-layout_tag: [32]layout.Type,
-prev_layout_tag: [32]layout.Type,
+layout_tag: [32]Layout.Type,
+prev_layout_tag: [32]Layout.Type,
 
 name: ?[]const u8 = null,
 x: i32 = undefined,
@@ -56,8 +58,9 @@ pub fn create(
     output.* = .{
         .rwm_output = rwm_output,
         .rwm_layer_shell_output = rwm_layer_shell_output,
-        .layout_tag = .{ config.layout.default } ** 32,
-        .prev_layout_tag = .{ config.layout.default } ** 32,
+        .layout = config.layout,
+        .layout_tag = .{ config.default_layout } ** 32,
+        .prev_layout_tag = .{ config.default_layout } ** 32,
     };
     output.link.init();
 
@@ -295,14 +298,14 @@ pub fn toggle_tag(self: *Self, mask: u32) void {
 }
 
 
-pub fn current_layout(self: *Self) layout.Type {
+pub fn current_layout(self: *Self) Layout.Type {
     std.debug.assert(self.main_tag != 0 and self.main_tag & (self.main_tag-1) == 0);
 
     return self.layout_tag[@ctz(self.main_tag)];
 }
 
 
-pub fn set_current_layout(self: *Self, layout_t: layout.Type) void {
+pub fn set_current_layout(self: *Self, layout_t: Layout.Type) void {
     std.debug.assert(self.main_tag != 0 and self.main_tag & (self.main_tag-1) == 0);
 
     const i = @ctz(self.main_tag);
@@ -321,14 +324,14 @@ pub fn switch_to_previous_layout(self: *Self) void {
     log.debug("<{*}> tag {b} switch to previous layout", .{ self, self.main_tag });
 
     const i = @ctz(self.main_tag);
-    mem.swap(layout.Type, &self.layout_tag[i], &self.prev_layout_tag[i]);
+    mem.swap(Layout.Type, &self.layout_tag[i], &self.prev_layout_tag[i]);
 
     if (comptime build_options.bar_enabled) self.bar.damage(.layout);
 }
 
 
 pub fn manage(self: *Self) void {
-    layout.arrange(self.current_layout(), self);
+    self.layout.arrange(self.current_layout(), self);
 
     log.debug("<{*}> managed", .{ self });
 }

@@ -587,14 +587,12 @@ pub fn swap(self: *Self, direction: types.Direction) void {
 pub fn attach_window(self: *Self, window: *Window, mode: types.WindowAttachMode) void {
     log.debug("attach {*}: {s}", .{ window, @tagName(mode) });
 
-    const config = Config.get();
-
     switch (mode) {
         .top => self.windows.prepend(window),
         .bottom => self.windows.append(window),
         .stack_top => if (self.current_output) |output| {
             const nmaster = switch (output.current_layout()) {
-                .tile => config.layout.tile.nmaster,
+                .tile => output.layout.tile.nmaster,
                 .deck => 1,
                 else => 0,
             };
@@ -1050,7 +1048,7 @@ fn rwm_listener(rwm: *river.WindowManagerV1, event: river.WindowManagerV1.Event,
                 window,
                 config.default_attach_mode.getter.get(
                     if (context.current_output) |output| output.current_layout()
-                    else config.layout.default,
+                    else config.default_layout,
                 ),
             );
             context.focus(window);

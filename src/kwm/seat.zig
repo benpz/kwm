@@ -661,8 +661,8 @@ fn handle_actions(self: *Self) void {
                 if (context.current_output) |output| {
                     if (output.current_layout() == .tile) {
                         switch (data.change) {
-                            .increase => config.layout.tile.nmaster += 1,
-                            .decrease => config.layout.tile.nmaster = @max(1, config.layout.tile.nmaster-1),
+                            .increase => output.layout.tile.nmaster += 1,
+                            .decrease => output.layout.tile.nmaster = @max(1, output.layout.tile.nmaster-1),
                         }
                     }
                 }
@@ -670,7 +670,7 @@ fn handle_actions(self: *Self) void {
             .modify_mfact => |data| {
                 if (context.current_output) |output| {
                     switch (output.current_layout()) {
-                        .tile => config.layout.tile.mfact = @min(1, @max(0, config.layout.tile.mfact+data.step)),
+                        .tile => output.layout.tile.mfact = @min(1, @max(0, output.layout.tile.mfact+data.step)),
                         .scroller => if (context.focus_top_in(output, false)) |window| {
                             window.scroller_mfact = @min(1, @max(0, window.scroller_mfact+data.step));
                         },
@@ -681,11 +681,11 @@ fn handle_actions(self: *Self) void {
             .modify_gap => |data| {
                 if (context.current_output) |output| {
                     switch (output.current_layout()) {
-                        .tile => config.layout.tile.inner_gap = @max(config.border.width*2, config.layout.tile.inner_gap+data.step),
-                        .grid => config.layout.grid.inner_gap = @max(config.border.width*2, config.layout.grid.inner_gap+data.step),
-                        .monocle => config.layout.monocle.gap = @max(config.border.width*2, config.layout.monocle.gap+data.step),
-                        .deck => config.layout.deck.inner_gap = @max(config.border.width*2, config.layout.deck.inner_gap+data.step),
-                        .scroller => config.layout.scroller.inner_gap = @max(config.border.width*2, config.layout.scroller.inner_gap+data.step),
+                        .tile => output.layout.tile.inner_gap = @max(config.border.width*2, output.layout.tile.inner_gap+data.step),
+                        .grid => output.layout.grid.inner_gap = @max(config.border.width*2, output.layout.grid.inner_gap+data.step),
+                        .monocle => output.layout.monocle.gap = @max(config.border.width*2, output.layout.monocle.gap+data.step),
+                        .deck => output.layout.deck.inner_gap = @max(config.border.width*2, output.layout.deck.inner_gap+data.step),
+                        .scroller => output.layout.scroller.inner_gap = @max(config.border.width*2, output.layout.scroller.inner_gap+data.step),
                         .float => {},
                     }
                 }
@@ -693,8 +693,8 @@ fn handle_actions(self: *Self) void {
             .modify_master_location => |data| {
                 if (context.current_output) |output| {
                     switch (output.current_layout()) {
-                        .tile => config.layout.tile.master_location = data.location,
-                        .deck => config.layout.deck.master_location = data.location,
+                        .tile => output.layout.tile.master_location = data.location,
+                        .deck => output.layout.deck.master_location = data.location,
                         else => {},
                     }
                 }
@@ -702,7 +702,7 @@ fn handle_actions(self: *Self) void {
             .toggle_grid_direction => {
                 if (context.current_output) |output| {
                     if (output.current_layout() == .grid) {
-                        config.layout.grid.direction = switch (config.layout.grid.direction) {
+                        output.layout.grid.direction = switch (output.layout.grid.direction) {
                             .horizontal => .vertical,
                             .vertical => .horizontal,
                         };
