@@ -659,7 +659,7 @@ pub fn prepare_remove_seat(self: *Self, seat: *Seat) void {
 }
 
 
-pub inline fn switch_mode(self: *Self, mode: []const u8) void {
+pub fn switch_mode(self: *Self, mode: []const u8) void {
     log.debug("switch mode from {s} to {s}", .{ self.mode, mode });
 
     self.mode = fmt.bufPrint(&mode_buffer, "{s}", .{ mode }) catch @panic("mode name too lone");
@@ -721,7 +721,7 @@ pub inline fn find_terminal(self: *Self, pid: i32) ?*Window {
 }
 
 
-pub inline fn set_current_output(self: *Self, output: ?*Output) void {
+pub fn set_current_output(self: *Self, output: ?*Output) void {
     log.debug("set current output: {*}", .{ output });
 
     if (comptime build_options.bar_enabled) {

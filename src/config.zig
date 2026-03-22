@@ -245,7 +245,7 @@ pub fn deep_equal(comptime T: type, a: *const T, b: *const T) bool {
 
 
 // copy from std.zon.parse
-pub fn zon_free(gpa: mem.Allocator, value: anytype) void {
+fn zon_free(gpa: mem.Allocator, value: anytype) void {
     const Value = @TypeOf(value);
 
     switch (@typeInfo(Value)) {
