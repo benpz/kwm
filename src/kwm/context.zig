@@ -798,19 +798,22 @@ fn init_env_map(self: *Self) void {
         };
     }
 
-    if (config.xcursor_theme) |xcursor_theme| blk: {
-        ctx.?.env.put("XCURSOR_THEME", xcursor_theme.name) catch |err| {
-            log.warn("put XCURSOR_THEME to `{s}` failed: {}", .{ xcursor_theme.name, err });
-        };
+    switch (config.xcursor_theme) {
+        .none => {},
+        .theme => |xcursor_theme| blk: {
+            ctx.?.env.put("XCURSOR_THEME", xcursor_theme.name) catch |err| {
+                log.warn("put XCURSOR_THEME to `{s}` failed: {}", .{ xcursor_theme.name, err });
+            };
 
-        var buffer: [8]u8 = undefined;
-        const xcursor_size = fmt.bufPrint(&buffer, "{}", .{ xcursor_theme.size }) catch |err| {
-            log.warn("bufPrint failed: {}", .{ err });
-            break :blk;
-        };
-        ctx.?.env.put("XCURSOR_SIZE", xcursor_size) catch |err| {
-            log.warn("put XCURSOR_SIZE to `{}` failed: {}", .{ xcursor_theme.size, err });
-        };
+            var buffer: [8]u8 = undefined;
+            const xcursor_size = fmt.bufPrint(&buffer, "{}", .{ xcursor_theme.size }) catch |err| {
+                log.warn("bufPrint failed: {}", .{ err });
+                break :blk;
+            };
+            ctx.?.env.put("XCURSOR_SIZE", xcursor_size) catch |err| {
+                log.warn("put XCURSOR_SIZE to `{}` failed: {}", .{ xcursor_theme.size, err });
+            };
+        }
     }
 }
 
