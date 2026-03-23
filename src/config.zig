@@ -153,15 +153,6 @@ libinput_device_rules: []const rule.LibinputDevice,
 xkb_keyboard_rules: []const rule.XkbKeyboard,
 
 
-fn free_user_config() void {
-    if (user_config) |cfg| {
-        log.debug("free user config", .{});
-
-        meta.zon_free(allocator, cfg);
-    }
-}
-
-
 pub fn init(al: *const mem.Allocator, config_path: []const u8) void {
     log.debug("config init", .{});
 
@@ -176,7 +167,11 @@ pub fn init(al: *const mem.Allocator, config_path: []const u8) void {
 pub inline fn deinit() void {
     log.debug("config deinit", .{});
 
-    free_user_config();
+    if (user_config) |cfg| {
+        log.debug("free user config", .{});
+
+        meta.zon_free(allocator, cfg);
+    }
 }
 
 
@@ -184,16 +179,23 @@ pub fn reload() meta.field_mask(Self) {
     log.debug("reload user config", .{});
 
     var mask: meta.field_mask(Self) = .{};
-    if (try_load_user_config()) |cfg| {
+    var new_cfg = try_load_user_config();
+    if (new_cfg) |*cfg| {
+        defer meta.zon_free(allocator, cfg.*);
         const struct_info = @typeInfo(Self).@"struct";
-        if (user_config) |old_cfg| {
+        if (user_config) |*old_cfg| {
             inline for (struct_info.fields) |field| {
                 if (!meta.deep_equal(
-                    @FieldType(@TypeOf(cfg), field.name),
-                    &@field(old_cfg, field.name),
-                    &@field(cfg, field.name),
+                    @FieldType(@TypeOf(cfg.*), field.name),
+                    &@field(old_cfg.*, field.name),
+                    &@field(cfg.*, field.name),
                 )) {
                     @field(mask, field.name) = true;
+                    mem.swap(
+                        @FieldType(@TypeOf(cfg.*), field.name),
+                        &@field(old_cfg.*, field.name),
+                        &@field(cfg.*, field.name),
+                    );
                 }
             }
         } else {
@@ -202,21 +204,14 @@ pub fn reload() meta.field_mask(Self) {
             }
         }
 
-        const modified = blk: {
+        // if modified, refresh config
+        blk: {
             inline for (struct_info.fields) |field| {
                 if (@field(mask, field.name)) {
-                    break :blk true;
+                    refresh_config();
+                    break :blk;
                 }
             }
-            break :blk false;
-        };
-
-        if (modified) {
-            free_user_config();
-            user_config = cfg;
-            refresh_config();
-        } else {
-            meta.zon_free(allocator, cfg);
         }
     }
     return mask;
