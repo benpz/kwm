@@ -157,6 +157,10 @@ pub fn destroy(self: *Self) void {
                 },
                 else => {}
             }
+
+            if (seat.window_below_pointer.window == self) {
+                seat.window_below_pointer = .{};
+            }
         }
     }
 
