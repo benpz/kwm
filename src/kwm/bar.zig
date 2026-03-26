@@ -558,7 +558,7 @@ fn render_dynamic_component(self: *Self) void {
             .height = h,
         },
     };
-    _ = pixman.Image.fillRectangles(.src, buffer.image, &transparent, 1, &bg_rect);
+    _ = pixman.Image.fillRectangles(.src, buffer.image, &select_bg, 1, &bg_rect);
 
 
     var x: i16 = 0;
@@ -569,12 +569,16 @@ fn render_dynamic_component(self: *Self) void {
         x += self.render_str(
             buffer,
             mode_tag,
-            &normal_fg,
+            &select_fg,
             x+@as(i16, @intCast(@divFloor(pad, 2))),
             y,
         ) + @as(i16, @intCast(pad));
     }
     self.dynamic_splits.appendBounded(x) catch unreachable;
+
+    bg_rect[0].x = x;
+    bg_rect[0].width = w - @as(u16, @intCast(x));
+    _ = pixman.Image.fillRectangles(.src, buffer.image, &transparent, 1, &bg_rect);
 
     x += self.render_str(
         buffer,
