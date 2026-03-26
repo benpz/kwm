@@ -31,11 +31,11 @@ pub fn preprocess(allocator: mem.Allocator, file: fs.File) !std.ArrayList(u8) {
     };
 
     const if_pattern = mvzr.compile(
-        \\//\s*@if\s*\(.*\)
+        \\//\s*@if\s*\(.+\)
         \\
     ).?;
     const elif_pattern = mvzr.compile(
-        \\//\s*@elif\s*\(.*\)
+        \\//\s*@elif\s*\(.+\)
         \\
     ).?;
     const else_pattern = mvzr.compile(
