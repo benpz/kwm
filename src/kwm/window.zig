@@ -51,6 +51,7 @@ former_output: ?[]const u8 = null,
 unhandled_events: std.ArrayList(Event) = undefined,
 
 layer_managed: bool = false,
+floating_changed: bool = true,
 fullscreen: union(enum) {
     none,
     window,
@@ -427,6 +428,7 @@ pub fn toggle_floating(self: *Self, flag: ?bool) void {
         if (flag) |floating| (if (self.floating != floating) floating else return)
         else !self.floating;
     self.layer_managed = false;
+    self.floating_changed = true;
 
     log.debug("<{*}> toggle floating: {}", .{ self, self.floating });
 
@@ -512,13 +514,6 @@ pub fn handle_events(self: *Self) void {
         switch (event) {
             .init => {
                 log.debug("<{*}> managing new window", .{ self });
-
-                self.rwm_window.setTiled(.{
-                    .top = true,
-                    .bottom = true,
-                    .left = true,
-                    .right = true,
-                });
 
                 self.rwm_window.setCapabilities(.{
                     .window_menu = false,
@@ -670,6 +665,20 @@ pub fn handle_events(self: *Self) void {
                     self.operator = .none;
                 }
             },
+        }
+    }
+
+    if (self.floating_changed) {
+        self.floating_changed = false;
+        if (self.floating) {
+            self.rwm_window.setTiled(.{});
+        } else {
+            self.rwm_window.setTiled(.{
+                .top = true,
+                .bottom = true,
+                .left = true,
+                .right = true,
+            });
         }
     }
 }
