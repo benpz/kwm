@@ -70,6 +70,9 @@
     // .on_output_changed: warp cursor to the center of output focused
     .cursor_warp = .none,
 
+    // disable wrap around when iter focus or swap window in scroller layout
+    .disable_wrap_around_for_scroller = false,
+
     // if to remember last floating geometry
     .remember_floating_geometry = false,
 
