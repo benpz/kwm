@@ -576,6 +576,12 @@ fn handle_actions(self: *Self) void {
                     output.set_tag(data.tag.of(.{ .output = output }));
                 }
             },
+            .set_output_tag_all => |data| {
+                var it = context.outputs.safeIterator(.forward);
+                while (it.next()) |output| {
+                    output.set_tag(data.tag.of(.{ .output = output }));
+                }
+            },
             .set_window_tag => |data| {
                 if (context.focused_window()) |window| {
                     window.set_tag(data.tag.of(.{ .window = window }));
@@ -586,6 +592,12 @@ fn handle_actions(self: *Self) void {
                     output.toggle_tag(data.mask);
                 }
             },
+            .toggle_output_tag_all => |data| {
+                var it = context.outputs.safeIterator(.forward);
+                while (it.next()) |output| {
+                    output.toggle_tag(data.mask);
+                }
+            },
             .toggle_window_tag => |data| {
                 if (context.focused_window()) |window| {
                     window.toggle_tag(data.mask);
@@ -593,6 +605,12 @@ fn handle_actions(self: *Self) void {
             },
             .switch_to_previous_tag => {
                 if (context.current_output) |output| {
+                    output.switch_to_previous_tag();
+                }
+            },
+            .switch_to_previous_tag_all => {
+                var it = context.outputs.safeIterator(.forward);
+                while (it.next()) |output| {
                     output.switch_to_previous_tag();
                 }
             },
