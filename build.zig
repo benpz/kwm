@@ -258,6 +258,18 @@ pub fn build(b: *std.Build) void {
         if (b.lazyDependency("kwim", .{ .optimize = optimize, .kwm_config = path })) |kwim_dep| {
             const kwim = kwim_dep.artifact("kwim");
             b.installArtifact(kwim);
+
+            const bash_path = kwim_dep.path("completions/kwim.bash");
+            if (fs.accessAbsolute(bash_path.getPath(b), .{})) |_| {
+                const install_bash = b.addInstallFile(bash_path, "share/bash-completion/completions/kwim");
+                b.getInstallStep().dependOn(&install_bash.step);
+            } else |_| {}
+
+            const zsh_path = kwim_dep.path("completions/kwim.zsh");
+            if (fs.accessAbsolute(zsh_path.getPath(b), .{})) |_| {
+                const install_zsh = b.addInstallFile(zsh_path, "share/zsh/site-functions/_kwim");
+                b.getInstallStep().dependOn(&install_zsh.step);
+            } else |_| {}
         }
     }
 
