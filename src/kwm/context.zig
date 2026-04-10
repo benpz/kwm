@@ -406,7 +406,7 @@ pub fn focus(self: *Self, window: *Window, lift: bool) void {
     if (self.focused_window()) |w| {
         // unmaximize window if focus changed
         if (w != window and w.maximize) {
-            w.toggle_maximize();
+            w.toggle_maximize(false);
         }
     }
 
