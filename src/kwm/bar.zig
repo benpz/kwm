@@ -236,6 +236,8 @@ pub fn render(self: *Self) void {
 inline fn static_component_width(self: *Self) i32 {
     const config = Config.get();
 
+    if (config.bar.hide_tags) return 0;
+
     std.debug.assert(self.static_splits.items.len == config.tags.len);
 
     return self.static_splits.getLast();
