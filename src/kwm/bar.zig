@@ -216,7 +216,7 @@ pub fn render(self: *Self) void {
     if (self.static_component_damaged or self.background_damaged) {
         defer self.static_component_damaged = false;
 
-        self.render_static_component();
+		if (!Config.get().bar.hide_tags) self.render_static_component();
     }
 
     if (self.dynamic_component_damaged or self.background_damaged) {
@@ -553,14 +553,16 @@ fn render_dynamic_component(self: *Self) void {
             break :blk layout_tag_buffer[0..tag.len + str.len*n - (right-left+2)*n];
         } else break :blk tag;
     };
-    x += self.font.render_str(
-        buffer,
-        layout_tag,
-        &normal_fg,
-        x+@as(i16, @intCast(@divFloor(pad, 2))),
-        y,
-    ) + @as(i16, @intCast(pad));
-    self.dynamic_splits.appendBounded(x) catch unreachable;
+    if (layout_tag.len > 0) {
+        x += self.font.render_str(
+            buffer,
+            layout_tag,
+            &normal_fg,
+            x+@as(i16, @intCast(@divFloor(pad, 2))),
+            y,
+        ) + @as(i16, @intCast(pad));
+        self.dynamic_splits.appendBounded(x) catch unreachable;
+    }
 
     const title_start = x;
     if (context.focus_top_in(self.output, false)) |window| {
@@ -594,14 +596,16 @@ fn render_dynamic_component(self: *Self) void {
             );
         }
 
-        if (window.title) |title| {
-            x += self.font.render_str(
-                buffer,
-                title,
-                &select_fg,
-                x+@as(i16, @intCast(@divFloor(pad, 2))),
-                y,
-            ) + @as(i16, @intCast(pad));
+        if (!config.bar.hide_window_title) {
+            if (window.title) |title| {
+                x += self.font.render_str(
+                    buffer,
+                    title,
+                    &select_fg,
+                    x+@as(i16, @intCast(@divFloor(pad, 2))),
+                    y,
+                ) + @as(i16, @intCast(pad));
+            }
         }
     }
 

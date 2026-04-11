@@ -69,6 +69,8 @@ bar: struct {
             bg: u32,
         },
     },
+    hide_tags: bool,
+    hide_window_title: bool,
     status: union(enum) {
         text: []const u8,
         stdin,

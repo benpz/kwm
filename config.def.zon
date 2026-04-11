@@ -37,6 +37,8 @@
                 .bg = 0xc8d3f5d0,
             },
         },
+        .hide_tags = false,
+        .hide_window_title = false,
         .status = .{ .text = "^#ff0000ffk^#00ff00ffw^#0000ffffm" }, // .stdin or .{ .fifo = "fifo file path" }, could use ^#RGBA to switch text color, and use ^#! to switch back to default color
         // bar clicked callback
         // each part supports left/right/middle/side/extra/forward/back/task
