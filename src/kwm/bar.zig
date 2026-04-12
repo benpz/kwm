@@ -478,6 +478,22 @@ fn render_dynamic_component(self: *Self) void {
     const select_bg = render_.utils.color(config.bar.color.select.bg);
     const select_fg = render_.utils.color(config.bar.color.select.fg);
     const transparent = mem.zeroes(pixman.Color);
+    const layout_bg = switch (self.output.current_layout()) {
+        .tile => render_.utils.color(config.layout_colors.tile.bg),
+        .grid => render_.utils.color(config.layout_colors.grid.bg),
+        .monocle => render_.utils.color(config.layout_colors.monocle.bg),
+        .deck => render_.utils.color(config.layout_colors.deck.bg),
+        .scroller => render_.utils.color(config.layout_colors.scroller.bg),
+        .float => render_.utils.color(config.layout_colors.float.bg),
+    };
+    const layout_fg = switch (self.output.current_layout()) {
+        .tile => render_.utils.color(config.layout_colors.tile.fg),
+        .grid => render_.utils.color(config.layout_colors.grid.fg),
+        .monocle => render_.utils.color(config.layout_colors.monocle.fg),
+        .deck => render_.utils.color(config.layout_colors.deck.fg),
+        .scroller => render_.utils.color(config.layout_colors.scroller.fg),
+        .float => render_.utils.color(config.layout_colors.float.fg),
+    };
 
     const pad = self.get_pad();
     const w: u16 = @intCast(
@@ -554,10 +570,32 @@ fn render_dynamic_component(self: *Self) void {
             break :blk layout_tag_buffer[0..tag.len + str.len*n - (right-left+2)*n];
         } else break :blk tag;
     };
+
+    if (render_.utils.to_utf8(utils.allocator, layout_tag)) |utf| {
+        const utf_r = self.font.rasterize_text_run(utf) orelse unreachable;
+        const layout_len = render_.utils.text_width(utf_r);
+
+        const tag_rect = [_]pixman.Rectangle16 {
+            .{
+                .x = x,
+                .y = y,
+                .width = @intCast(layout_len+pad),
+                .height = h,
+            }
+        };
+        _ = pixman.Image.fillRectangles(
+            .src,
+            buffer.image,
+            &layout_bg,
+            1,
+            &tag_rect,
+        );
+    } else |err| { log.warn("<{*}> to_utf8 failed: {}", .{ self, err }); }
+
     x += self.font.render_str(
         buffer,
         layout_tag,
-        &normal_fg,
+        &layout_fg,
         x+@as(i16, @intCast(@divFloor(pad, 2))),
         y,
     ) + @as(i16, @intCast(pad));

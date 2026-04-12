@@ -181,6 +181,15 @@
         .float = "><>",
     },
 
+    .layout_colors = .{
+        .tile     = .{ .bg = 0x00000000, .fg = 0x828bb8ff },
+        .grid     = .{ .bg = 0x00000000, .fg = 0x828bb8ff },
+        .monocle  = .{ .bg = 0x00000000, .fg = 0x828bb8ff },
+        .deck     = .{ .bg = 0x00000000, .fg = 0x828bb8ff },
+        .scroller = .{ .bg = 0x00000000, .fg = 0x828bb8ff },
+        .float    = .{ .bg = 0x00000000, .fg = 0x828bb8ff },
+    },
+
     // key/pointer bindings
     .bindings = .{
         // repeat info for key repeat event, different with the repeat_info of input device

@@ -124,6 +124,14 @@ layout_tag: struct {
     scroller: []const u8,
     float: []const u8,
 },
+layout_colors: struct {
+    tile: struct{ bg: u32, fg: u32 },
+    grid: struct{ bg: u32, fg: u32 },
+    monocle: struct{ bg: u32, fg: u32 },
+    deck: struct{ bg: u32, fg: u32 },
+    scroller: struct{ bg: u32, fg: u32 },
+    float: struct{ bg: u32, fg: u32 },
+},
 
 bindings: struct {
     repeat_info: struct {
