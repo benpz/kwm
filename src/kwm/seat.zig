@@ -561,9 +561,13 @@ fn handle_actions(self: *Self) void {
                             @tagName(mode)
                         ),
                     };
-                }
 
-                context.switch_mode(data.mode);
+                    context.switch_mode(data.mode);
+                } else if (self.chorded.state == .disabled) {
+                    context.switch_mode(data.mode);
+                } else {
+                    self.mode = fmt.bufPrint(&self.mode_buffer, "{s}", .{ data.mode }) catch unreachable;
+                }
             },
             .focus_iter => |data| {
                 context.focus_iter(data.direction, data.skip);
