@@ -1014,7 +1014,7 @@ fn wl_seat_listener(wl_seat: *wl.Seat, event: wl.Seat.Event, seat: *Self) void {
 
             // automatically run `kwim` when receive `capabilities` event
             // since if tty switched, the `capabilities` event will be resent
-            if (comptime build_options.install_kwim) {
+            if (comptime build_options.kwim_enabled) {
                 const config_path = fs.cwd().realpathAlloc(utils.allocator, Config.path) catch null;
                 defer if (config_path) |ptr| utils.allocator.free(ptr);
 
