@@ -69,6 +69,11 @@ zig build -Doptimize=ReleaseSafe
 - `-Dkwim`: if to call [kwim] automatically (defaults to `true`)
 
 ## Installation
+
+<a href="https://repology.org/project/kwm/versions">
+  <img align="right" width="192" src="https://repology.org/badge/vertical-allrepos/kwm.svg">
+</a>
+
 See [packages.md] for community maintained packages.
 
 ```sh
