@@ -692,6 +692,11 @@ fn handle_actions(self: *Self) void {
                     output.set_current_layout(data.layout);
                 }
             },
+            .toggle_layout => |data| {
+                if (context.current_output) |output| {
+                    output.toggle_current_layout(data.layout, data.other);
+                }
+            },
             .switch_to_previous_layout => {
                 if (context.current_output) |output| {
                     output.switch_to_previous_layout();

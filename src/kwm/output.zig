@@ -316,6 +316,20 @@ pub fn set_current_layout(self: *Self, layout_t: Layout.Type) void {
     if (comptime build_options.bar_enabled) self.bar.damage(.layout);
 }
 
+pub fn toggle_current_layout(self: *Self, layout_t: Layout.Type, layout_o: ?Layout.Type) void {
+    std.debug.assert(self.main_tag != 0 and self.main_tag & (self.main_tag-1) == 0);
+
+    const i = @ctz(self.main_tag);
+    if (self.layout_tag[i] != layout_t) {
+        set_current_layout(self, layout_t);
+        return;
+    }
+    if (layout_o) |layout_other| {
+        set_current_layout(self, layout_other);
+    }
+    else switch_to_previous_layout(self);
+}
+
 
 pub fn switch_to_previous_layout(self: *Self) void {
     log.debug("<{*}> tag {b} switch to previous layout", .{ self, self.main_tag });
