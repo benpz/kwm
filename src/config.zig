@@ -168,14 +168,18 @@ fn try_load_user_config() ?Config {
     defer buffer.deinit(allocator);
 
     @setEvalBranchQuota(20000);
+    var diag: std.zon.parse.Diagnostics = .{};
     return zon.parse.fromSlice(
         Config,
         allocator,
         buffer.items[0..buffer.items.len-1:0],
-        null,
+        &diag,
         .{.ignore_unknown_fields = true},
     ) catch |err| {
-        log.err("load user config failed: {}", .{ err });
+        switch (err) {
+            error.ParseZon => log.err("load user config failed: {f}", .{ diag }),
+            else => log.err("load user config failed: {}", .{ err }),
+        }
         return null;
     };
 }
